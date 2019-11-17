@@ -59,7 +59,10 @@ module.exports = function(ctx) {
       // extractCSS: false,
 
       // https://quasar.dev/quasar-cli/cli-documentation/handling-webpack
-      extendWebpack(cfg) {}
+      extendWebpack(cfg) {
+        cfg.target = "node-webkit"; // Set the target to node-webkit (https://webpack.js.org/configuration/target/)
+        cfg.node = false; // Don't set certain Node globals/modules to empty objects (https://webpack.js.org/configuration/node/)
+      }
     },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
