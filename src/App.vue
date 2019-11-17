@@ -11,6 +11,10 @@
 // https://github.com/Inventsable/starlette
 import starlette from "starlette";
 
+// Dynamic identification object that reports all panel and host information:
+// https://github.com/Inventsable/CEP-Spy
+import spy from "cep-spy";
+
 import { Dialog, Loading, Notify, LoadingBar } from "quasar";
 import showErrorMessage from "src/functions/function-show-error-message.js";
 
