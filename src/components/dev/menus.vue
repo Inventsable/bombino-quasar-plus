@@ -8,6 +8,8 @@
 // All changes and modifications trigger redraw of menu and events.
 // Modify either menu with .push() or other array methods and see results instantly
 
+import spy from "cep-spy";
+
 // Access this component anywhere via this.app.menus (this.$root.$children[0].menus)
 export default {
   name: "adobe-menus",
@@ -68,21 +70,6 @@ export default {
         else str += `<MenuItem Label="---" />`;
       });
       return (str += `</Menu>`);
-    },
-    // Retrieve localhost without use of CSInterface
-    localhost() {
-      const debug = window.cep.fs.readFile(
-        `${decodeURI(window.__adobe_cep__.getSystemPath("extension")).replace(
-          /file\:\/{1,}/,
-          ""
-        )}/.debug`
-      );
-      const port = new RegExp(
-        `\\<Host\\sName\\=\\"${
-          JSON.parse(window.__adobe_cep__.getHostEnvironment()).appName
-        }\\"\\sPort\\=\\"(\\d*)`
-      );
-      return `http://localhost:${debug.data.match(port)[1]}`;
     }
   },
   watch: {
@@ -103,8 +90,7 @@ export default {
       if (id == "refresh") {
         location.reload();
       } else if (id == "localhost") {
-        console.log(this.localhost);
-        cep.util.openURLInDefaultBrowser(this.localhost);
+        spy.launchLocalhost();
       } else if (id == "modal") {
         this.app.launchModal();
       }
