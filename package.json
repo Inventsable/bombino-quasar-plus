@@ -18,6 +18,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "cep-spy": "^1.1.1",
+    "lokney": "^1.0.0",
     "lottie-web": "^5.5.9",
     "quasar": "^1.0.0",
     "starlette": "^0.4.4"

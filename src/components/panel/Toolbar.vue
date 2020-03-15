@@ -45,4 +45,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.q-tab {
+  min-height: 32px;
+  max-height: 32px;
+}
+</style>

@@ -11,6 +11,24 @@
 // https://github.com/Inventsable/starlette
 import starlette from "starlette";
 
+// Utility components, see here:
+// https://github.com/Inventsable/lokney
+import { Menus, Panel } from "lokney";
+/*
+  Panel component above also includes:
+    - Starlette UI theme and color library: 
+      https://github.com/Inventsable/starlette
+    - CEP-Spy identification and app utility:
+      https://github.com/Inventsable/cep-spy
+ These are still installed into this panel and can be used when needed like so:
+ import spy from 'cep-spy'
+
+ NOTES: 
+  - Starlette is already active in your panel! There's no need to initialize it.
+  - Need CSInterface or a script? You can use the script-path attribute of Panel to launch scripts or utilities:
+    https://github.com/Inventsable/lokney/tree/master/components/Panel
+*/
+
 // Dynamic identification object that reports all panel and host information:
 // https://github.com/Inventsable/CEP-Spy
 import spy from "cep-spy";
@@ -21,7 +39,8 @@ import showErrorMessage from "src/functions/function-show-error-message.js";
 export default {
   name: "App",
   components: {
-    menus: require("src/components/dev/menus.vue").default,
+    Menus,
+    Panel,
     "loading-bar": require("src/components/panel/LoadingBar").default
   },
   data: () => ({
@@ -54,16 +73,7 @@ export default {
     }
   },
   mounted() {
-    console.clear();
-    starlette.init();
     this.loading = false;
-    this.csInterface = new CSInterface();
-    this.csInterface.addEventListener("console", this.consoler);
-
-    // Utility components already mounted prior to this
-    console.log(
-      `${spy.extName} ${spy.extVersion} : ${spy.isDev ? "DEV" : "BUILD"}`
-    );
 
     // The modal and panel share the same Vue instance.
     // If this is the modal window (we know by it's ID from manifest.xml), push it to the Modal route.
@@ -83,9 +93,7 @@ export default {
           });
         }
       );
-    }
-    this.loadUniversalScripts();
-    //
+    } //
     this.$q.notify.setDefaults({
       timeout: 2500,
       actions: [{ icon: "close", color: "white" }]
@@ -111,49 +119,6 @@ export default {
       event.data = data;
       this.csInterface.dispatchEvent(event);
     },
-    loadScript(path) {
-      // Correctly loads a script regardless of whether Animate or regular CEP app
-      if (!/FLPR/.test(spy.appName))
-        this.csInterface.evalScript(`$.evalFile('${path}')`);
-      else
-        this.csInterface.evalScript(
-          `fl.runScript(FLfile.platformPathToURI("${path}"))`
-        );
-    },
-    loadUniversalScripts() {
-      // Preloads any script located inside ./src/host/universal
-      let utilFolder = window.cep.fs.readdir(
-        `${spy.path.root}/src/host/universal/`
-      );
-      if (!utilFolder.err) {
-        let valids = utilFolder.data.filter(file => {
-          return /\.(jsx|jsfl)$/.test(file);
-        });
-        valids.forEach(file => {
-          this.loadScript(`${spy.path.root}/src/host/universal/${file}`);
-        });
-      }
-      // Preloads any script located in ./src/host/[appName]/
-      let hostFolder = window.cep.fs.readdir(
-        `${spy.path.root}/src/host/${spy.appName}/`
-      );
-      if (!hostFolder.err) {
-        let valids = hostFolder.data.filter(file => {
-          return /\.(jsx|jsfl)$/.test(file);
-        });
-        valids.forEach(file => {
-          this.loadScript(`${spy.path.root}/src/host/${spy.appName}/${file}`);
-        });
-      } else {
-        console.log(
-          `${spy.path.root}/src/host/${spy.appName} has no valid files or does not exist`
-        );
-      }
-    },
-    consoler(msg) {
-      // Catches all console.log() usage in .jsx files via CSEvent
-      console.log(`${spy.appName}: ${msg.data}`);
-    },
     getCSS(prop) {
       // Returns current value of CSS variable
       // prop == typeof String as name of variable, with or without leading dashes:
@@ -176,44 +141,7 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
-:root {
-  --quad: cubic-bezier(0.48, 0.04, 0.52, 0.96);
-  --quart: cubic-bezier(0.76, 0, 0.24, 1);
-  --quint: cubic-bezier(0.84, 0, 0.16, 1);
-  --toolbar-height: 48px;
-  --bottombar-height: 30px;
-
-  background-color: var(--color-bg);
-  color: var(--color-default);
-  font-family: "Open Sans", sans-serif;
-}
-
-body::-webkit-scrollbar {
-  width: 16px;
-}
-#app::-webkit-scrollbar {
-  display: block;
-  width: 16px;
-}
-::-webkit-scrollbar {
-  background-color: var(--color-scrollbar);
-  width: 16px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-scrollbar-thumb);
-  border-radius: 20px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-scrollbar-thumb-hover);
-}
-::-webkit-scrollbar-resizer {
-  display: none;
-}
-::-webkit-scrollbar-button {
-  height: 0px;
-}
-
+/* Quasar specific helpers. Starlette via <Panel> already takes care of CSS loading and general theme */
 .q-card.q-dialog-plugin {
   background-color: var(--color-bg);
   color: var(--color-default);
