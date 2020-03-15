@@ -1,8 +1,10 @@
 <template>
   <div id="q-app">
-    <menus />
-    <loading-bar position="top" ref="loader" />
-    <router-view />
+    <Panel>
+      <Menus refresh debug />
+      <loading-bar position="top" ref="loader" />
+      <router-view />
+    </Panel>
   </div>
 </template>
 
